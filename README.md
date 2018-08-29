@@ -3,29 +3,17 @@
 This repository contains example _in situ_ sequencing-by-synthesis data (in `example_data/`) and analysis code (in `ops/`) for the manuscript *Pooled optical screens in human cells*, which is available on [Biorxiv](https://www.biorxiv.org/content/early/2018/08/02/383943).
 
 
-### Installation (OSX)
+### Installation (OSX and popular linux)
 
-Download the OpticalPooledScreens directory (e.g., on Github use the green "Clone or download" button, then "Download ZIP").
+Download the OpticalPooledScreens code (e.g., on Github use the green "Clone or download" button, then "Download ZIP") and extract to a local directory.
 
-In Terminal, go to the OpticalPooledScreens project directory and create a Python 3 virtual environment using a command like:
-
-```bash
-python3 -m venv venv
-```
-
-If the python3 command isn't available, you might need to specify the full path. E.g., if [Miniconda](https://conda.io/miniconda.html) is installed in the home directory:
-
-```bash
-~/miniconda3/bin/python -m venv venv
-```
-
-This creates a virtual environment called `venv` for project-specific resources. The commands in `install.sh` add required packages to the virtual environment:
-
+In `Terminal`, go to the OpticalPooledScreens project directory (e.g. `cd Downloads/opticalpooledscreens-master`) and run:
 ```bash
 sh install.sh
 ```
+This creates a virtual environment called `venv` for project-specific resources (if one does not already exsist) and installs the required packages into the virtual environment.
 
-The `ops` package is installed with `pip install -e`, so the source code can be modified from the `ops/` directory without re-installing. The `ops` package is compatible with Python 2.7 as well as Python 3.6, however the results will not be numerically identical.
+*Note*: The `ops` package is installed with `pip install -e`, so the source code can be modified from the `ops/` directory without re-installing. The `ops` package is compatible with Python 2.7 as well as Python 3.6, however the results will not be numerically identical.
 
 ## Running example code
 

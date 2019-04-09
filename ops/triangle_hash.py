@@ -178,7 +178,7 @@ def compare_positions(df_0, df_1):
 def query_points(df_query, df_target, n):
     df_0 = df_query.sample(n, random_state=0)
     df_1 = df_target
-    rotation, translation, inliers, hits = compare_positions(df_0, df_1)
+    rotation, translation, inliers, hits, model = compare_positions(df_0, df_1)
     return {'translation': translation, 
             'rotation': rotation,
             'inliers': inliers.sum(), 

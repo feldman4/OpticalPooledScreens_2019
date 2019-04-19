@@ -612,37 +612,6 @@ def join_stacks(*args):
         
     return output
 
-
-def max_project_zstack(stack,slices=5):
-    """Condense z-stack into a single slice using a simple maximum project through 
-    all slices for each channel individually. If slices is a list, then specifies the number 
-    of slices for each channel."""
-
-    if isinstance(slices,list):
-        channels = len(slices)
-
-        maxed = []
-        end_ch_slice = 0
-        for ch in range(len(slices)):
-            end_ch_slice += slices[ch]
-            ch_slices = stack[(end_ch_slice-slices[ch]):(end_ch_slice)]
-            ch_maxed = np.amax(ch_slices,axis=0)
-            maxed.append(ch_maxed)
-
-    else:
-        channels = int(stack.shape[-3]/slices)
-        assert len(stack) == int(slices)*channels, 'Input data must have leading dimension length slices*channels'
-
-        maxed = []
-        for ch in range(channels):
-            ch_slices = stack[(ch*slices):((ch+1)*slices)]
-            ch_maxed = np.amax(ch_slices,axis=0)
-            maxed.append(ch_maxed)
-
-    maxed = np.array(maxed)
-
-    return maxed
-
 # SCIKIT-IMAGE
 def regionprops(labeled, intensity_image):
     """Supplement skimage.measure.regionprops with additional field `intensity_image_full` 

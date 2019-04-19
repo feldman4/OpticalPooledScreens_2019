@@ -134,8 +134,8 @@ def get_vectors(X):
     return np.array(vectors).reshape(-1, 18), np.array(centers)
 
 def nearest_neighbors(V_0, V_1):
-    Y = cdist(V_0, V_1)
-    distances = Y.min(axis=1)
+    Y = cdist(V_0, V_1, metric='sqeuclidean')
+    distances = np.sqrt(Y.min(axis=1))
     ix_0 = np.arange(V_0.shape[0])
     ix_1 = Y.argmin(axis=1)
     return ix_0, ix_1, distances
@@ -146,43 +146,6 @@ def get_vc(df, normalize=True):
     if normalize:
         V = V / df['magnitude'].values[:, None]
     return V, c
-
-def compare_positions(df_0, df_1):
-    V_0, c_0 = get_vc(df_0)
-    V_1, c_1 = get_vc(df_1)
-
-    i0, i1, distances = nearest_neighbors(V_0, V_1)
-
-    model = RANSACRegressor(random_state=0, min_samples=10, residual_threshold=30)
-
-    # default model (LinearRegression) fits 2x2 matrix (rotation and scaling)
-    # and intercept (translation)
-    X = c_0[i0]
-    Y = c_1[i1]
-    model.fit(X, Y)
-    
-    rotation = model.estimator_.coef_
-    translation = model.estimator_.intercept_
-    inliers = model.inlier_mask_
-    
-    # analyze inliers
-    inlier_count = model.inlier_mask_.sum()
-    score = model.score(X, Y)
-
-    guess = model.predict(X) 
-    error = np.linalg.norm(guess - Y, axis=1)
-    hits = error < 2
-    
-    return rotation, translation, inliers, hits, model
-
-def query_points(df_query, df_target, n):
-    df_0 = df_query.sample(n, random_state=0)
-    df_1 = df_target
-    rotation, translation, inliers, hits, model = compare_positions(df_0, df_1)
-    return {'translation': translation, 
-            'rotation': rotation,
-            'inliers': inliers.sum(), 
-            'hits': hits.sum()}
 
 def evaluate_match(df_0, df_1, threshold_triangle=0.3, threshold_point=2):
     
@@ -207,12 +170,12 @@ def evaluate_match(df_0, df_1, threshold_triangle=0.3, threshold_point=2):
     translation = model.estimator_.intercept_
     
     # score transformation based on triangle i,j centers
-    distances = cdist(model.predict(c_0), c_1)
+    distances = cdist(model.predict(c_0), c_1, metric='sqeuclidean')
     # could use a fraction of the data range or nearest neighbor 
     # distances within one point set
     threshold_region = 50
-    filt = distances.min(axis=0) < threshold_region
-    score = (distances.min(axis=0)[filt] < threshold_point).mean()
+    filt = np.sqrt(distances.min(axis=0)) < threshold_region
+    score = (np.sqrt(distances.min(axis=0))[filt] < threshold_point).mean()
     
     return rotation, translation, score
 
@@ -237,7 +200,7 @@ def prioritize(df_info_0, df_info_1, matches):
 
     # rank all pairs by distance
     predicted = model.predict(df_info_0.values)
-    distances = cdist(predicted, df_info_1)
+    distances = cdist(predicted, df_info_1, metric='sqeuclidean')
     ix = np.argsort(distances.flatten())
     ix_0, ix_1 = np.unravel_index(ix, distances.shape)
 
@@ -291,9 +254,9 @@ def merge_sbs_phenotype(df_sbs_, df_ph_, model):
 
     threshold = 2
 
-    distances = cdist(Y, Y_pred)
+    distances = cdist(Y, Y_pred, metric='sqeuclidean')
     ix = distances.argmin(axis=1)
-    filt = distances.min(axis=1) < threshold
+    filt = np.sqrt(distances.min(axis=1)) < threshold
     columns = {'site': 'site', 'cell_ph': 'cell_ph',
               'i': 'i_ph', 'j': 'j_ph',}
 
@@ -305,7 +268,7 @@ def merge_sbs_phenotype(df_sbs_, df_ph_, model):
      [list(columns.keys())]
      .rename(columns=columns)
      .pipe(lambda x: pd.concat([sbs, x], axis=1))
-     .assign(distance=distances.min(axis=1)[filt])
+     .assign(distance=np.sqrt(distances.min(axis=1))[filt])
      [cols_final]
     )
 
@@ -339,11 +302,13 @@ def plot_alignments(df_ph, df_sbs, df_align, site):
 
 
 def multistep_alignment(df_0, df_1, df_info_0, df_info_1, 
-                        initial_sites=6, batch_size=180):
+                        initial_sites=8, batch_size=180):
     """Provide triangles from one well only.
     """
-    sites = list(np.random.choice(df_info_1.index, size=initial_sites, 
-                                  replace=False))
+    sites = (pd.Series(df_info_1.index)
+        .sample(initial_sites, replace=False, random_state=0)
+        .pipe(list))
+
     df_initial = brute_force_pairs(df_0, df_1.query('site == @sites'))
 
     # dets = df_initial.query('score > 0.3')['determinant']

@@ -98,7 +98,7 @@ def groupby_reduce_concat(gb, *args, **kwargs):
     arr = []
     for name, f in kwargs.items():
         if callable(f):
-            arr += [f(gb).rename(name)]
+            arr += [gb.apply(f).rename(name)]
         else:
             arr += [reductions[f](gb).rename(name)]
 
@@ -253,7 +253,7 @@ def expand_sep(df, col, sep=','):
      .assign(**{col: values}))
 
 
-def csv_frame(files_or_search, tqdn=False):
+def csv_frame(files_or_search, tqdn=False, **kwargs):
     """Convenience function, pass either a list of files or a 
     glob wildcard search term.
     """
@@ -261,7 +261,7 @@ def csv_frame(files_or_search, tqdn=False):
     
     def read_csv(f):
         try:
-            return pd.read_csv(f)
+            return pd.read_csv(f, **kwargs)
         except pd.errors.EmptyDataError:
             return None
     

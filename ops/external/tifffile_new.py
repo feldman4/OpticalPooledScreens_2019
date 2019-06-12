@@ -2160,7 +2160,12 @@ class TiffFile(object):
 
         if key is None:
             try:
-                result = result.reshape(series.shape,order='F')
+                # result = result.reshape(series.shape,order='F')
+                if len(series.shape)>=4:
+                    result.shape = series.shape[:-4]+series.shape[-3:-5:-1]+series.shape[-2:]
+                    result = numpy.swapaxes(result,-3,-4)
+                else:
+                    result.shape = series.shape
             except ValueError:
                 try:
                     log.warning('TiffFile.asarray: failed to reshape %s to %s',

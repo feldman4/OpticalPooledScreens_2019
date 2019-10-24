@@ -1,6 +1,8 @@
 ## Optical Pooled Screens
 
-Example _in situ_ sequencing-by-synthesis data (in `example_data/`) and analysis code (in `ops/`) for the manuscript *Pooled optical screens in human cells*, available on [Biorxiv](https://www.biorxiv.org/content/early/2018/08/02/383943).
+Example _in situ_ sequencing-by-synthesis data (in `example_data/`) and analysis code (in `ops/`) for the publication [*Optical pooled screens in human cells*](https://doi.org/10.1016/j.cell.2019.09.016).
+
+We are currently in the process of depositing complete screening datasets (paired in situ sequencing and p65 translocation phenotyping) in the [Cell-IDR database](https://idr.openmicroscopy.org/about/studies.html).
 
 
 ### Installation (OSX)

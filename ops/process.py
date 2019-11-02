@@ -111,7 +111,6 @@ def log_ndi(data, sigma=1, *args, **kwargs):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         return skimage.img_as_uint(arr_)
-    
 
 class Align:
     """Alignment redux, used by snakemake.
@@ -214,8 +213,6 @@ class Align:
         find_border = lambda x: int((x/2.) * (1 - 1/float(window)))
         i, j = find_border(height), find_border(width)
         return data[..., i:height - i, j:width - j]
-
-
 
 
 # SEGMENT

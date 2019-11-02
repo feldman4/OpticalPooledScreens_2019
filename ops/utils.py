@@ -161,6 +161,15 @@ def groupby_apply2(df_1, df_2, cols, f, tqdn=True):
     return pd.concat(arr)    
 
 
+def groupby_apply_norepeat(gb, f, *args, **kwargs):
+    """Avoid double calling on first group.
+    """
+    arr = []
+    for _, df in gb:
+        arr += [f(df, *args, **kwargs)]
+    return pd.concat(arr)
+
+
 def ndarray_to_dataframe(values, index):
     names, levels  = zip(*index)
     columns = pd.MultiIndex.from_product(levels, names=names)

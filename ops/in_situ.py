@@ -88,6 +88,7 @@ def call_cells(df_reads):
       .drop_duplicates(cols)
       .drop([READ, BARCODE], axis=1) # drop the read
       .drop([POSITION_I, POSITION_J], axis=1) # drop the read coordinates
+      .filter(regex='^(?!Q_)') # remove read quality scores
       .query('cell > 0') # remove reads not in a cell
     )
 
@@ -203,20 +204,24 @@ def phred(q):
     return chr(n)
 
 
-def add_clusters(df_cells, neighbor_dist=50):
+def add_clusters(df_cells, barcode_col=BARCODE_0, neighbor_dist=50,
+        verbose=True, ij=(POSITION_I, POSITION_J)):
     """Assigns -1 to clusters with only one cell.
     """
     from scipy.spatial.kdtree import KDTree
     import networkx as nx
 
-    x = df_cells[GLOBAL_X] + df_cells[POSITION_J]
-    y = df_cells[GLOBAL_Y] + df_cells[POSITION_I]
-    barcodes = df_cells[BARCODE_0]
+    x = df_cells[GLOBAL_X] + df_cells[ij[1]]
+    y = df_cells[GLOBAL_Y] + df_cells[ij[0]]
+    barcodes = df_cells[barcode_col]
     barcodes = np.array(barcodes)
 
     kdt = KDTree(np.array([x, y]).T)
     num_cells = len(df_cells)
-    print('searching for clusters among %d cells' % num_cells)
+
+    if verbose:
+        message = 'searching for clusters among {} {} objects'
+        print(message.format(num_cells, barcode_col))
     pairs = kdt.query_pairs(neighbor_dist)
     pairs = np.array(list(pairs))
 

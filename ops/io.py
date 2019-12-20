@@ -184,18 +184,18 @@ def infer_luts_display_ranges(data, luts, display_ranges):
         luts = DEFAULT_LUTS + (GRAY,) * (nchannels - len(DEFAULT_LUTS))
 
     if display_ranges is None:
-        display_ranges = [None] * data.shape[-3]
+        display_ranges = [None] * nchannels
 
     for i, dr in enumerate(display_ranges):
         if dr is None:
             x = data[..., i, :, :]
             display_ranges[i] = x.min(), x.max()
-    try:
-        luts = luts[:nchannels]
-        display_ranges = display_ranges[:nchannels]
-    except IndexError:
+    if len(luts) < nchannels or len(display_ranges) < nchannels:
         error = 'Must provide at least {} luts and display ranges'
         raise IndexError(error.format(nchannels))
+    else:
+        luts = luts[:nchannels]
+        display_ranges = display_ranges[:nchannels]
 
     return luts, display_ranges
 
@@ -238,7 +238,9 @@ def imagej_description(leading_shape, leading_axes, contrast=None):
 
 def ij_tag_50838(nchannels):
     """ImageJ uses tag 50838 to indicate size of metadata elements (e.g., 768 bytes per ROI)
-    :param nchannels:
+    Parameter `nchannels` must accurately describe the length of the display ranges and LUTs, 
+    or the values imported into LUTs will be shifted in memory.
+    :param nchannels: 
     :return:
     """
     info_block = (20,)  # summary of metadata fields
@@ -249,7 +251,7 @@ def ij_tag_50838(nchannels):
 
 def ij_tag_50839(luts, display_ranges):
     """ImageJ uses tag 50839 to store metadata. Only range and luts are implemented here.
-    :param tuple luts: tuple of 255*3=768 8-bit ints specifying RGB, e.g., constants io.RED etc.
+    :param tuple luts: tuple of 256*3=768 8-bit ints specifying RGB, e.g., constants io.RED etc.
     :param tuple display_ranges: tuple of (min, max) pairs for each channel
     :return:
     """

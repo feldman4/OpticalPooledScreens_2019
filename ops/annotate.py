@@ -151,6 +151,7 @@ def build_discrete_lut(colors):
 def bitmap_line(s):
     """Draw text using Visitor font (characters are 5x5 pixels).
     """
+    import PIL.ImageDraw
     img = PIL.Image.new("RGBA", (len(s) * 8, 10), (0, 0, 0))
     draw = PIL.ImageDraw.Draw(img)
     draw.text((0, 0), s, (255, 255, 255), font=VISITOR_FONT)

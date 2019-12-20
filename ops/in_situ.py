@@ -88,6 +88,7 @@ def call_cells(df_reads):
       .drop_duplicates(cols)
       .drop([READ, BARCODE], axis=1) # drop the read
       .drop([POSITION_I, POSITION_J], axis=1) # drop the read coordinates
+      .filter(regex='^(?!Q_)') # remove read quality scores
       .query('cell > 0') # remove reads not in a cell
     )
 

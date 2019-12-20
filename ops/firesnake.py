@@ -299,7 +299,7 @@ class Snake():
              .rename(columns={'label': 'cell'}))
 
     @staticmethod
-    def _extract_phenotype_FR_myc(data_phenotype, nuclei, data_sbs_1, wildcards):
+    def _extract_phenotype_FR_myc(data_phenotype, nuclei, wildcards):
         """Features for frameshift reporter phenotyped in DAPI, HA, myc channels.
         """
         from ops.features import features_frameshift_myc

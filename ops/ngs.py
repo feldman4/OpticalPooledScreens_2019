@@ -39,8 +39,8 @@ def load_sgRNA_hists(histogram_files, threshold=3):
 
     return pd.concat(arr)
 
-def calc_stats(df_hist, df_design):
-    sample_cols = ['dataset', 'plate', 'well', 'subpool']
+def calc_stats(df_hist, df_design, extra_cols=[]):
+    sample_cols = ['dataset', 'plate', 'well', 'subpool'] + extra_cols
     sizes = df_design.groupby('subpool').size()
     fractions = (df_hist
      .groupby(sample_cols)

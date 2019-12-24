@@ -23,6 +23,7 @@ POSITION_J = 'j'
 GLOBAL_X = 'global_x'
 GLOBAL_Y = 'global_y'
 CLUSTER = 'cluster'
+CLUSTER_SIZE = 'cluster_size'
 
 # design
 DIALOUT = 'dialout'

@@ -237,7 +237,11 @@ def add_clusters(df_cells, barcode_col=BARCODE_0, neighbor_dist=50,
     for i, c in enumerate(clusters):
         cluster_index[list(c)] = i
 
+    df_cells = df_cells.copy()
     df_cells[CLUSTER] = cluster_index
+    df_cells[CLUSTER_SIZE] = (df_cells
+        .groupby([TILE, CLUSTER])[barcode_col].transform('size'))
+    df_cells.loc[df_cells[CLUSTER] == -1, CLUSTER_SIZE] = 1
     return df_cells
 
 

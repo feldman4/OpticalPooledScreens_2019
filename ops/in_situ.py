@@ -204,15 +204,16 @@ def phred(q):
     return chr(n)
 
 
-def add_clusters(df_cells, barcode_col=BARCODE_0, neighbor_dist=50,
+def add_clusters(df_cells, barcode_col=BARCODE_0, radius=50,
         verbose=True, ij=(POSITION_I, POSITION_J)):
     """Assigns -1 to clusters with only one cell.
     """
     from scipy.spatial.kdtree import KDTree
     import networkx as nx
 
-    x = df_cells[GLOBAL_X] + df_cells[ij[1]]
-    y = df_cells[GLOBAL_Y] + df_cells[ij[0]]
+    I, J = ij
+    x = df_cells[GLOBAL_X] + df_cells[J]
+    y = df_cells[GLOBAL_Y] + df_cells[I]
     barcodes = df_cells[barcode_col]
     barcodes = np.array(barcodes)
 
@@ -222,7 +223,7 @@ def add_clusters(df_cells, barcode_col=BARCODE_0, neighbor_dist=50,
     if verbose:
         message = 'searching for clusters among {} {} objects'
         print(message.format(num_cells, barcode_col))
-    pairs = kdt.query_pairs(neighbor_dist)
+    pairs = kdt.query_pairs(radius)
     pairs = np.array(list(pairs))
 
     x = barcodes[pairs]
@@ -240,7 +241,7 @@ def add_clusters(df_cells, barcode_col=BARCODE_0, neighbor_dist=50,
     df_cells = df_cells.copy()
     df_cells[CLUSTER] = cluster_index
     df_cells[CLUSTER_SIZE] = (df_cells
-        .groupby([TILE, CLUSTER])[barcode_col].transform('size'))
+        .groupby(CLUSTER)[barcode_col].transform('size'))
     df_cells.loc[df_cells[CLUSTER] == -1, CLUSTER_SIZE] = 1
     return df_cells
 

@@ -64,7 +64,7 @@ def _memoize(f, *args, **kwargs):
 def natsort_values(df, cols, ascending=True):
     """Substitute for pd.DataFrame.sort_values
     """
-    import natsort
+    from natsort import index_natsorted
     if not isinstance(cols, list):
         cols = [cols]
     values = np.array([np.argsort(index_natsorted(df[c])) for c in cols]).T
@@ -211,15 +211,6 @@ def uncategorize(df, as_codes=False):
         else:
             df[col] = np.asarray(df[col])
     return df
-
-
-def natsort_values(df, columns):
-    from natsort import natsorted
-    data = df[columns].copy()
-    uncategorize(data, as_codes=True)
-    keys = [(val, i) for i, val in enumerate(data.values)]
-    index = [i for _, i in natsorted(keys)]
-    return df.iloc[index]
 
 
 def rank_by_order(df, groupby_columns):

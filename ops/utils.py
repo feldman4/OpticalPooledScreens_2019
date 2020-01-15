@@ -61,6 +61,19 @@ def _memoize(f, *args, **kwargs):
     
 
 # PANDAS
+def natsort_values(df, cols, ascending=True):
+    """Substitute for pd.DataFrame.sort_values
+    """
+    import natsort
+    if not isinstance(cols, list):
+        cols = [cols]
+    values = np.array([np.argsort(index_natsorted(df[c])) for c in cols]).T
+    ix = (pd.DataFrame(values, columns=cols)
+          .sort_values(cols, ascending=ascending)
+          .index)
+    return df.iloc[list(ix)].copy()
+
+
 def bin_join(xs, symbol):
     symbol = ' ' + symbol + ' ' 
     return symbol.join('(%s)' % x for x in xs)

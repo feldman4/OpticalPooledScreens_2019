@@ -355,22 +355,48 @@ def montage(arr, shape=None):
     first N-2 dimensions must match, tiles are expanded to max height and width
     pads with zero, no spacing
     if shape=(rows, columns) not provided, defaults to square, clipping last row if empty
+    if shape contains -1, infers this dimension
+    if (rows or columns) == 1, does not pad zeros in (width or height)
     """
     sz = list(zip(*[img.shape for img in arr]))
     h, w, n = max(sz[-2]), max(sz[-1]), len(arr)
+
     if not shape:
         nr = nc = int(np.ceil(np.sqrt(n)))
         if (nr - 1) * nc >= n:
             nr -= 1
+    elif -1 in shape:
+        assert shape[0] != shape[1], 'cannot infer both rows and columns, use shape=None for square montage'
+        shape = np.array(shape)
+        infer, given = int(np.argwhere(shape==-1)),int(np.argwhere(shape!=-1))
+        shape[infer] = int(np.ceil(n/shape[given]))
+        if (shape[infer]-1)*shape[given] >= n:
+            shape[infer] -= 1
+        nr, nc = shape
     else:
         nr, nc = shape
-    M = np.zeros(arr[0].shape[:-2] + (nr * h, nc * w), dtype=arr[0].dtype)
 
-    for (r, c), img in zip(product(range(nr), range(nc)), arr):
-        s = [[None] for _ in img.shape]
-        s[-2] = (r * h, r * h + img.shape[-2])
-        s[-1] = (c * w, c * w + img.shape[-1])
-        M[tuple(slice(*x) for x in s)] = img
+    if 1 in (nr,nc):
+        assert nr != nc, 'no need to montage a single image'
+        shape = np.array((nr,nc))
+        single_axis,other_axis = int(np.argwhere(shape==1)),int(np.argwhere(shape!=1))
+        arr_padded = []
+        for img in arr:
+            sub_size = (h,img.shape[-2])[single_axis], (w,img.shape[-1])[other_axis]
+            sub = np.zeros(img.shape[:-2] + (sub_size[0],) + (sub_size[1],), dtype=arr[0].dtype)
+            s = [[None] for _ in img.shape]
+            s[-2] = (0, img.shape[-2])
+            s[-1] = (0, img.shape[-1])
+            sub[tuple(slice(*x) for x in s)] = img
+            arr_padded.append(sub)
+        M = np.concatenate(arr_padded,axis=(-2+other_axis))
+    else:
+        M = np.zeros(arr[0].shape[:-2] + (nr * h, nc * w), dtype=arr[0].dtype)
+        for (r, c), img in zip(product(range(nr), range(nc)), arr):
+            s = [[None] for _ in img.shape]
+            s[-2] = (r * h, r * h + img.shape[-2])
+            s[-1] = (c * w, c * w + img.shape[-1])
+            M[tuple(slice(*x) for x in s)] = img
 
     return M
 

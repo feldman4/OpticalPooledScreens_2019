@@ -2160,7 +2160,7 @@ class TiffFile(object):
 
         if key is None:
             try:
-                result.shape = series.shape
+                result = result.reshape(series.shape,order='F')
             except ValueError:
                 try:
                     log.warning('TiffFile.asarray: failed to reshape %s to %s',

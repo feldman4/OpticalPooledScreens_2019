@@ -221,6 +221,7 @@ def add_base_codes(df_reads, bases, offset, col):
          )
     return pd.concat([df_reads, df + offset], axis=1)
 
+
 def annotate_bases(df_reads, col='barcode', bases='GTAC', offset=1, **kwargs):
     """
     from ops.annotate import add_base_codes, GRMC

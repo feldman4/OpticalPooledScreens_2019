@@ -36,8 +36,8 @@ nbconvert==5.3.1
 nbformat==4.4.0
 networkx==2.1
 notebook>=5.7.2
-numpy==1.15.0
-pandas==0.23.3
+numpy==1.18.1
+pandas==1.0.0
 pandocfilters==1.4.2
 parso==0.3.1
 pexpect==4.6.0
@@ -59,13 +59,13 @@ pyzmq==17.1.0
 qtconsole==4.3.1
 ratelimiter==1.2.0.post0
 requests==2.21.0
-scikit-image==0.14.0
+scikit-image==0.16.2
 scipy==1.1.0
-seaborn==0.9.0
+seaborn==0.10.0
 Send2Trash==1.5.0
 simplegeneric==0.8.1
 six==1.11.0
-snakemake==4.5.0
+snakemake==5.10.0
 statsmodels==0.9.0
 tables==3.5.1
 terminado==0.8.1

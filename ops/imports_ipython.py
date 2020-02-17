@@ -12,4 +12,5 @@ IPython.get_ipython().run_line_magic('autoreload', '2')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from tqdm import tqdm_notebook as tqdn
+import tqdm.notebook
+tqdn = tqdm.notebook.tqdm

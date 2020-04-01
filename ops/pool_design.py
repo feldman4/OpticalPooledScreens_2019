@@ -338,14 +338,15 @@ def build_khash(xs, k, return_dict=False):
         return hash_buckets
 
 
-def sparse_dist(hash_buckets, threshold, distance=None):
+def sparse_dist(hash_buckets, threshold, distance=None, progress=None):
     """Entries less than threshold only.
     """
     if distance is None:
         distance = Levenshtein.distance
+    if progress is None:
+        progress = lambda x: x
     D = {}
-    from tqdm import tqdm_notebook as tqdn
-    for xs in tqdn(hash_buckets):
+    for xs in progress(hash_buckets):
         for i, a in enumerate(xs):
             for b in xs[i+1:]:
                 d = distance(a,b)

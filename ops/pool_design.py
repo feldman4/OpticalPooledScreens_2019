@@ -449,21 +449,18 @@ def maxy_clique_groups(cm, group_ids, verbose=False):
     return selected
 
 
-def sparse_dist_parallel(hash_buckets, min_distance, 
-                        distance=distance_prefix):
+def sparse_dist_parallel(hash_buckets, min_distance, distance=None):
     from multiprocessing import Pool
-    f = lambda xs: sparse_dist(xs, threshold=min_distance, 
-                        distance=distance_prefix)
 
     n = num_cores * 10
     ix = np.floor(np.linspace(0, len(hash_buckets), n)).astype(int)
 
     arr = []
     for i, j in zip(ix, ix[1:]):
-        arr += [hash_buckets[i:j]]
+        arr += [(hash_buckets[i:j], min_distance, distance)]
 
     with Pool(num_cores) as p:
-        results = p.map(f, arr)
+        results = p.starmap(sparse_dist, arr)
 
     D = {}
     for d in results:

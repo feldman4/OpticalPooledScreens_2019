@@ -14,6 +14,8 @@ num_cores = 4
 # LOAD TABLES
 
 def validate_design(df_design):
+    if 0 in df_design['dialout'].values:
+        raise ValueError('dialout primers are one-indexed; value of 0 in "dialout" column is invalid.')
     for group, df in df_design.groupby('group'):
         x = df.drop_duplicates(['prefix_length', 'edit_distance'])
         if len(x) > 1:
@@ -237,7 +239,7 @@ def build_test(df_oligos, dialout_primers):
     pat = pat.format(fwd=sites[0], rev=sites[1])
 
     kosuri = {}
-    for i, (fwd, rev) in enumerate(dialout_primers):
+    for i, (fwd, rev) in enumerate(dialout_primers,start=1):
         kosuri[fwd] = 'fwd_{0}'.format(i)
         kosuri[rev] = 'rev_{0}'.format(i)
 
@@ -430,7 +432,7 @@ def maxy_clique_groups(cm, group_ids, verbose=False):
             index = None
 
         # keep index
-        if index:
+        if index is not None:
             selected.append(index)
             d3[id_] += 1
             available = available[available != index]

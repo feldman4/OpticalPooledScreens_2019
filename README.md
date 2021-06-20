@@ -1,4 +1,4 @@
-## Optical Pooled Screens
+## Optical Pooled Screens 2019 Edition
 
 **This repository has been superseded by [OpticalPooledScreens](https://github.com/feldman4/OpticalPooledScreens). Core functionality is largely the same but the analysis pipeline has been reorganized and expanded.**
 

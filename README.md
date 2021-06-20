@@ -1,5 +1,7 @@
 ## Optical Pooled Screens
 
+**This repository has been superseded by [OpticalPooledScreens](https://github.com/feldman4/OpticalPooledScreens). Core functionality is largely the same but the analysis pipeline has been reorganized and expanded.**
+
 Example _in situ_ sequencing-by-synthesis data (in `example_data/`) and analysis code (in `ops/`) for the publication [*Optical pooled screens in human cells*](https://doi.org/10.1016/j.cell.2019.09.016).
 
 We are currently in the process of depositing complete screening datasets (paired in situ sequencing and p65 translocation phenotyping) in the [Cell-IDR database](https://idr.openmicroscopy.org/about/studies.html).
